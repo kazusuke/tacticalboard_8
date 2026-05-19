@@ -52,7 +52,7 @@ const App = () => {
     const starters = formations['3-3-1'].map(p => ({ ...p, name: p.posName, isBench: false, color: TEAM_COLOR }));
     const bench = [
       { id: 101, name: 'るい', x: 25, y: 112, isBench: true, color: BENCH_COLOR },
-      { id: 102, name: 'たけくん', x: 50, y: 112, isBench: true, color: BENCH_COLOR },
+      { id: 102, name: 'たけはる', x: 50, y: 112, isBench: true, color: BENCH_COLOR },
       { id: 103, name: '控え3', x: 75, y: 112, isBench: true, color: BENCH_COLOR },
     ];
     setAllPlayers([...starters, ...bench]);
