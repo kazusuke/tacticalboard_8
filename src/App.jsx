@@ -62,15 +62,21 @@ const App = () => {
     setFormation(type);
     const template = formations[type];
     setAllPlayers(prev => {
-      const subs = prev.filter(p => p.isBench);
       const starters = prev.filter(p => !p.isBench);
+      const subs = prev.filter(p => p.isBench);
+      // 先発が足りない枠は、実在する控え選手で埋める(名前を新規作成して二重にしない)
+      const pool = [...starters, ...subs];
+      const picked = pool.slice(0, template.length);
+      const rest = pool.slice(template.length);
       const newStarters = template.map((slot, i) => ({
-        id: slot.id,
-        name: starters[i] ? starters[i].name : slot.posName,
+        ...picked[i],
+        id: picked[i] ? picked[i].id : slot.id,
+        name: picked[i] ? picked[i].name : slot.posName,
         x: slot.x, y: slot.y,
         isBench: false, color: TEAM_COLOR
       }));
-      return alignBenchPlayers([...newStarters, ...subs]);
+      const newSubs = rest.map(p => ({ ...p, isBench: true, color: BENCH_COLOR }));
+      return alignBenchPlayers([...newStarters, ...newSubs]);
     });
   };
 
@@ -99,7 +105,12 @@ const App = () => {
     ));
   };
 
-  const handleStart = (id) => setDraggedPlayerId(id);
+  const dragOriginRef = useRef(null);
+  const handleStart = (id) => {
+    const p = allPlayers.find(q => q.id === id);
+    dragOriginRef.current = p ? { x: p.x, y: p.y, isBench: p.isBench } : null;
+    setDraggedPlayerId(id);
+  };
   const handleMove = (e) => {
     if (draggedPlayerId === null) return;
     const clientX = e.clientX ?? e.touches?.[0]?.clientX;
@@ -111,6 +122,7 @@ const App = () => {
     setAllPlayers(prev => {
       const dragged = prev.find(p => p.id === draggedPlayerId);
       if (!dragged) return prev;
+      const origin = dragOriginRef.current;
       let newState;
       if (dragged.y <= 100) {
         const slots = formations[formation];
@@ -122,7 +134,12 @@ const App = () => {
         if (occupant) {
           newState = prev.map(p => {
             if (p.id === dragged.id) return { ...p, x: bestSlot.x, y: bestSlot.y, isBench: false, color: TEAM_COLOR };
-            if (p.id === occupant.id) return { ...p, x: dragged.x, y: 112, isBench: true, color: BENCH_COLOR };
+            if (p.id === occupant.id) {
+              // 先発同士なら入れ替え、控えからなら控えへ
+              return origin && !origin.isBench
+                ? { ...p, x: origin.x, y: origin.y, isBench: false, color: TEAM_COLOR }
+                : { ...p, x: dragged.x, y: 112, isBench: true, color: BENCH_COLOR };
+            }
             return p;
           });
         } else {
