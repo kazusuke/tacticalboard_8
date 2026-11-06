@@ -27,7 +27,7 @@ const App = () => {
       { id: 4, posName: 'じん', x: 80, y: 68 },
       { id: 5, posName: 'さら', x: 20, y: 40 },
       { id: 6, posName: 'こうすけ', x: 50, y: 40 },
-      { id: 7, posName: 'ゆう', x: 80, y: 40 },
+      { id: 7, posName: 'たけいじん', x: 80, y: 40 },
       { id: 8, posName: 'みらい', x: 50, y: 15 },
     ],
     '4-2-1': [
@@ -37,7 +37,7 @@ const App = () => {
       { id: 4, posName: 'じん', x: 62, y: 70 },
       { id: 5, posName: 'さら', x: 85, y: 68 },
       { id: 6, posName: 'こうすけ', x: 35, y: 40 },
-      { id: 7, posName: 'ゆう', x: 65, y: 40 },
+      { id: 7, posName: 'たけいじん', x: 65, y: 40 },
       { id: 8, posName: 'みらい', x: 50, y: 15 },
     ]
   };
@@ -62,7 +62,7 @@ const App = () => {
     const bench = [
       { id: 101, name: 'るい', x: 25, y: 112, isBench: true, color: BENCH_COLOR },
       { id: 102, name: 'たけはる', x: 50, y: 112, isBench: true, color: BENCH_COLOR },
-      { id: 103, name: 'たけいじん', x: 75, y: 112, isBench: true, color: BENCH_COLOR },
+      { id: 103, name: '控え1', x: 75, y: 112, isBench: true, color: BENCH_COLOR },
     ];
     setAllPlayers([...starters, ...bench]);
   }, []);
