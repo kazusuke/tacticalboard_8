@@ -7,6 +7,15 @@ const App = () => {
   const [draggedPlayerId, setDraggedPlayerId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const boardRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const onChange = (e) => { setIsMobile(e.matches); if (!e.matches) setIsSidebarOpen(false); };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
   const TEAM_COLOR = '#3b82f6';
   const BENCH_COLOR = '#64748b';
 
@@ -156,13 +165,13 @@ const App = () => {
 
   return (
     <div
-      style={{ display:'flex', flexDirection:'column', height:'100vh', background:'#0f172a',
+      style={{ display:'flex', flexDirection:'column', height:'100dvh', background:'#0f172a',
                fontFamily:'sans-serif', overflow:'hidden', userSelect:'none', touchAction:'none' }}
       onMouseMove={handleMove} onTouchMove={handleMove}
       onMouseUp={handleEnd} onTouchEnd={handleEnd}
     >
       {/* Mobile Header */}
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+      <div style={{ display: isMobile ? 'flex' : 'none', alignItems:'center', justifyContent:'space-between',
                     padding:'12px', background:'#fff', borderBottom:'1px solid #e2e8f0', flexShrink:0 }}>
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
           <div style={{ background:'#2563eb', padding:'6px', borderRadius:'8px' }}>
@@ -181,13 +190,13 @@ const App = () => {
       <div style={{ display:'flex', flex:1, overflow:'hidden' }}>
         {/* Sidebar */}
         <div style={{
-          position: isSidebarOpen ? 'fixed' : 'relative',
+          position:'fixed',
           top:0, left:0, bottom:0,
-          width: isSidebarOpen ? '100%' : '280px',
+          width:'100%',
           background:'#fff', borderRight:'1px solid #e2e8f0',
           overflowY:'auto', padding:'24px', zIndex:40,
           flexShrink:0,
-          display: isSidebarOpen ? 'block' : 'none'
+          display: isMobile && isSidebarOpen ? 'block' : 'none'
         }}>
           <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'32px' }}>
             <div style={{ background:'#2563eb', padding:'8px', borderRadius:'12px' }}>
@@ -276,7 +285,7 @@ const App = () => {
         <div style={{
           width:'280px', background:'#fff', borderRight:'1px solid #e2e8f0',
           overflowY:'auto', padding:'24px', flexShrink:0,
-          display: isSidebarOpen ? 'none' : 'block'
+          display: isMobile ? 'none' : 'block'
         }}>
           <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'32px' }}>
             <div style={{ background:'#2563eb', padding:'8px', borderRadius:'12px' }}>
@@ -357,17 +366,19 @@ const App = () => {
         </div>
 
         {/* Main Pitch */}
-        <div style={{ flex:1, overflowY:'auto', display:'flex', flexDirection:'column',
-                      alignItems:'center', padding:'40px 20px' }}>
+        <div style={{ flex:1, minWidth:0, overflowY:'auto', display:'flex', flexDirection:'column',
+                      alignItems:'center', padding: isMobile ? '16px 12px' : '40px 20px' }}>
           <div
             ref={boardRef}
             style={{
-              position:'relative', width:'100%', maxWidth:'460px',
-              aspectRatio:'4/5', maxHeight:'min(65vh, 600px)',
+              position:'relative', width:'100%',
+              // モバイルは画面高さに収まるよう幅を制限(4:5を維持)。下部に控えゾーン分の余白を確保
+              maxWidth: isMobile ? 'min(460px, calc((100dvh - 60px - 32px - 120px) * 0.8))' : '460px',
+              aspectRatio:'4/5', maxHeight: isMobile ? 'none' : 'min(65vh, 600px)',
               background:'#16a34a', borderRadius:'24px',
               border:'6px solid #fff',
               boxShadow:'0 0 50px rgba(0,0,0,0.5)',
-              flexShrink:0, marginBottom:'100px'
+              flexShrink:0, marginBottom: isMobile ? '110px' : '100px'
             }}
           >
             {/* Pitch markings */}
