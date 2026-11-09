@@ -1,3 +1,3 @@
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 0; }
-#root { width: 100%; height: 100vh; }
+html, body { margin: 0; padding: 0; overscroll-behavior: none; }
+#root { width: 100%; height: 100vh; height: 100dvh; }
